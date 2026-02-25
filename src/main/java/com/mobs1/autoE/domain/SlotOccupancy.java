@@ -88,7 +88,7 @@ public class SlotOccupancy {
 
     public void occupy(Vehicle vehicle, ParkingHistory session, LocalDateTime now) {
         if (occupied) {
-            throw new IllegalStateException("Already Occupied");
+            throw new IllegalStateException("이미 점유된 슬롯입니다.");
         }
         this.vehicle = vehicle;
         this.currentSession = session;

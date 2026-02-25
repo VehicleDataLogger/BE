@@ -78,6 +78,14 @@ public class ParkingHistory {
         return vehicle;
     }
 
+    public LocalDateTime getEntryAt() {
+        return entryAt;
+    }
+
+    public LocalDateTime getExitAt() {
+        return exitAt;
+    }
+
     public ParkingStatus getStatus() {
         return status;
     }
