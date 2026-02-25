@@ -5,28 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "PARKING_SLOT",
-        uniqueConstraints = @UniqueConstraint(name = "uk_zone_slot_code", columnNames = {"zone_id", "slot_code"}),
-        indexes = {
-                @Index(name = "idx_zone_slot_type", columnList = "zone_id, slot_type_id")
-        })
+        uniqueConstraints = @UniqueConstraint(name = "uk_zone_slot_code", columnNames = {"zone_id", "slot_code"}))
 public class ParkingSlot {
 
     @Id
@@ -45,7 +31,56 @@ public class ParkingSlot {
     @Column(name = "slot_code", nullable = false)
     private String slotCode;
 
-    @Builder.Default
     @Column(name = "is_active", nullable = false)
     private boolean active = true;
+
+    protected ParkingSlot() {
+        // JPA default constructor
+    }
+
+    public ParkingSlot(Zone zone, SlotType slotType, String slotCode, boolean active) {
+        this.zone = zone;
+        this.slotType = slotType;
+        this.slotCode = slotCode;
+        this.active = active;
+    }
+
+    public ParkingSlot(Zone zone, SlotType slotType, String slotCode) {
+        this(zone, slotType, slotCode, true);
+    }
+
+    // getter
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Zone getZone() {
+        return zone;
+    }
+
+    public SlotType getSlotType() {
+        return slotType;
+    }
+
+    public String getSlotCode() {
+        return slotCode;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+
+    /**
+     * 비활성화 시 외부에서 임의로 필드를 건드리지 않도록 의도된 진입점을 제공.
+     */
+
+    public void deactivate() {
+        this.active = false;
+    }
+
+    public void activate() {
+        this.active = true;
+    }
 }

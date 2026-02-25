@@ -8,28 +8,13 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
-@Table(name = "PARKING_history", indexes = {
-        @Index(name = "idx_zone_status", columnList = "zone_id, status"),
-        @Index(name = "idx_slot_status", columnList = "slot_id, status"),
-        @Index(name = "idx_vehicle_status", columnList = "vehicle_plate, status")
-})
+@Table(name = "PARKING_history")
 public class ParkingHistory {
 
     @Id
@@ -58,4 +43,47 @@ public class ParkingHistory {
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ParkingStatus status;
+
+    protected ParkingHistory() {
+        // JPA default constructor
+    }
+
+    private ParkingHistory(Zone zone,
+                           ParkingSlot slot,
+                           Vehicle vehicle,
+                           LocalDateTime entryAt,
+                           LocalDateTime exitAt,
+                           ParkingStatus status) {
+        this.zone = zone;
+        this.slot = slot;
+        this.vehicle = vehicle;
+        this.entryAt = entryAt;
+        this.exitAt = exitAt;
+        this.status = status;
+    }
+
+    public static ParkingHistory start(Zone zone, ParkingSlot slot, Vehicle vehicle, LocalDateTime entryAt) {
+        return new ParkingHistory(zone, slot, vehicle, entryAt, null, ParkingStatus.PARKED);
+    }
+
+    public Zone getZone() {
+        return zone;
+    }
+
+    public ParkingSlot getSlot() {
+        return slot;
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public ParkingStatus getStatus() {
+        return status;
+    }
+
+    public void exit(LocalDateTime exitAt) {
+        this.exitAt = exitAt;
+        this.status = ParkingStatus.EXITED;
+    }
 }

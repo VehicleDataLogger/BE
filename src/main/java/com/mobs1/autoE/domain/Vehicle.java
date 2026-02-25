@@ -7,17 +7,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "VEHICLE")
 public class Vehicle {
@@ -29,4 +19,26 @@ public class Vehicle {
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type_code")
     private SlotCategory vehicleTypeCode;
+
+    protected Vehicle() {
+        // JPA default constructor
+    }
+
+    public Vehicle(String vehicleNum, SlotCategory vehicleTypeCode) {
+        this.vehicleNum = vehicleNum;
+        this.vehicleTypeCode = vehicleTypeCode;
+    }
+
+    //getter
+    public String getVehicleNum() {
+        return vehicleNum;
+    }
+
+    public SlotCategory getVehicleTypeCode() {
+        return vehicleTypeCode;
+    }
+
+    public void changeType(SlotCategory vehicleTypeCode) {
+        this.vehicleTypeCode = vehicleTypeCode;
+    }
 }

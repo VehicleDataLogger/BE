@@ -7,17 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "ZONE", uniqueConstraints = {
         @UniqueConstraint(name = "uk_zone_name", columnNames = "zone_name")
@@ -31,4 +21,26 @@ public class Zone {
 
     @Column(name = "zone_name", nullable = false, unique = true)
     private String name;
+
+    protected Zone() {
+        // JPA default constructor
+    }
+
+    //setter
+    public Zone(String name) {
+        this.name = name;
+    }
+
+    //getter
+    public Integer getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void rename(String name) {
+        this.name = name;
+    }
 }
