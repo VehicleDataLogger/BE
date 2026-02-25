@@ -1,6 +1,6 @@
 package com.mobs1.autoE.domain;
 
-import com.mobs1.autoE.global.Enum.SlotCategory;
+import com.mobs1.autoE.global.enums.SlotCategory;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

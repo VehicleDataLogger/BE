@@ -1,6 +1,6 @@
 package com.mobs1.autoE.domain;
 
-import com.mobs1.autoE.global.Enum.ParkingStatus;
+import com.mobs1.autoE.global.enums.ParkingStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

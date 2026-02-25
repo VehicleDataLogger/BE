@@ -1,4 +1,4 @@
-package com.mobs1.autoE.global.Enum;
+package com.mobs1.autoE.global.enums;
 
 public enum ParkingStatus {
     PARKED,
