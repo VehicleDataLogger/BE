@@ -29,9 +29,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     // 2) Persistence (JPA/Hibernate)
-    // implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // 3) Database Driver (RDBMS)
+    runtimeOnly 'com.h2database:h2'
     // runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
     // 4) Lombok
