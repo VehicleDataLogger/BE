@@ -6,8 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AutoEApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(AutoEApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(AutoEApplication.class, args);
+    }
 }

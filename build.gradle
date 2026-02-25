@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.3'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
 }
 
 group = 'com.mobs1'
@@ -32,7 +33,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // 3) Database Driver (RDBMS)
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    runtimeOnly 'com.h2database:h2'
+    // runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
     // 4) Lombok
     compileOnly 'org.projectlombok:lombok'
@@ -44,4 +46,64 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+jacoco {
+    toolVersion = "0.8.11"
+}
+
+tasks.jacocoTestReport {
+    dependsOn tasks.test
+    reports {
+        xml.required = true
+        html.required = true
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect { dir ->
+            fileTree(dir: dir, exclude: [
+                    '**/config/**',
+                    '**/*Application*',
+                    '**/dto/**'
+            ])
+        }))
+    }
+}
+
+tasks.jacocoTestCoverageVerification {
+    dependsOn tasks.test
+    violationRules {
+        rule {
+            element = 'BUNDLE'
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.70
+            }
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.80
+            }
+        }
+
+        rule {
+            element = 'CLASS'
+            includes = ['com.mobs1.autoE.*']
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
+            }
+        }
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(tasks.jacocoTestReport.classDirectories)
+    }
+}
+
+tasks.check {
+    dependsOn tasks.jacocoTestReport
+    dependsOn tasks.jacocoTestCoverageVerification
 }
