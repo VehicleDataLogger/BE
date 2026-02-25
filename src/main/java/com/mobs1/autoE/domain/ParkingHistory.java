@@ -91,6 +91,13 @@ public class ParkingHistory {
     }
 
     public void exit(LocalDateTime exitAt) {
+        //TODO : 추가 예외처리 개선 필요
+        if (status == ParkingStatus.EXITED) {
+            throw new IllegalStateException("이미 출차 처리된 이력입니다.");
+        }
+        if (exitAt == null || exitAt.isBefore(entryAt)) {
+            throw new IllegalArgumentException("출차 시간은 입차 시간 이후여야 합니다.");
+        }
         this.exitAt = exitAt;
         this.status = ParkingStatus.EXITED;
     }
