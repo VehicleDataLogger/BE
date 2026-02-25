@@ -39,6 +39,9 @@ public class Vehicle {
     }
 
     public void changeType(SlotCategory vehicleTypeCode) {
+        if (vehicleTypeCode == null) {
+            throw new IllegalArgumentException("차량 타입 코드는 null이 될 수 없습니다.");
+        }
         this.vehicleTypeCode = vehicleTypeCode;
     }
 }

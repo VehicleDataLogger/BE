@@ -42,4 +42,31 @@ class ZoneAvailabilityTest {
         assertThat(availability.getDisabledAvailable()).isEqualTo(1);
         assertThat(availability.getUpdatedAt()).isEqualTo(now);
     }
+
+    @Test
+    @DisplayName("생성자에 전달한 초기 값이 그대로 세팅된다")
+    void constructorSetsInitialCounts() {
+        LocalDateTime now = LocalDateTime.now();
+        ZoneAvailability availability = new ZoneAvailability(zone,
+                10, 3, 7,
+                6, 1, 5,
+                2, 1, 1,
+                2, 1, 1,
+                now);
+
+        assertThat(availability.getZone()).isEqualTo(zone);
+        assertThat(availability.getTotalSlots()).isEqualTo(10);
+        assertThat(availability.getOccupiedSlots()).isEqualTo(3);
+        assertThat(availability.getAvailableSlots()).isEqualTo(7);
+        assertThat(availability.getGeneralTotal()).isEqualTo(6);
+        assertThat(availability.getGeneralOccupied()).isEqualTo(1);
+        assertThat(availability.getGeneralAvailable()).isEqualTo(5);
+        assertThat(availability.getEvTotal()).isEqualTo(2);
+        assertThat(availability.getEvOccupied()).isEqualTo(1);
+        assertThat(availability.getEvAvailable()).isEqualTo(1);
+        assertThat(availability.getDisabledTotal()).isEqualTo(2);
+        assertThat(availability.getDisabledOccupied()).isEqualTo(1);
+        assertThat(availability.getDisabledAvailable()).isEqualTo(1);
+        assertThat(availability.getUpdatedAt()).isEqualTo(now);
+    }
 }

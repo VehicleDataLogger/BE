@@ -1,6 +1,7 @@
 package com.mobs1.autoE.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,5 +29,38 @@ class ParkingSlotTest {
 
         slot.activate();
         assertThat(slot.isActive()).isTrue();
+    }
+
+    @Test
+    @DisplayName("이미 비활성 상태에서 다시 비활성화하면 예외를 던진다")
+    void deactivateTwiceThrows() {
+        ParkingSlot slot = new ParkingSlot(zone, slotType, "A3", false);
+
+        assertThat(slot.isActive()).isFalse();
+        assertThatThrownBy(slot::deactivate)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("이미 비활성화된 슬롯입니다.");
+    }
+
+    @Test
+    @DisplayName("이미 활성 상태에서 다시 활성화하면 예외를 던진다")
+    void activateTwiceThrows() {
+        ParkingSlot slot = new ParkingSlot(zone, slotType, "A4");
+
+        assertThat(slot.isActive()).isTrue();
+        assertThatThrownBy(slot::activate)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("이미 활성화된 슬롯입니다.");
+    }
+
+    @Test
+    @DisplayName("생성 시 active 플래그를 직접 지정할 수 있다")
+    void constructWithActiveFlag() {
+        ParkingSlot slot = new ParkingSlot(zone, slotType, "A5", false);
+
+        assertThat(slot.getZone()).isEqualTo(zone);
+        assertThat(slot.getSlotType()).isEqualTo(slotType);
+        assertThat(slot.getSlotCode()).isEqualTo("A5");
+        assertThat(slot.isActive()).isFalse();
     }
 }

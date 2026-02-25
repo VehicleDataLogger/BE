@@ -71,16 +71,17 @@ public class ParkingSlot {
         return active;
     }
 
-
-    /**
-     * 비활성화 시 외부에서 임의로 필드를 건드리지 않도록 의도된 진입점을 제공.
-     */
-
     public void deactivate() {
+        if (!active) {
+            throw new IllegalStateException("이미 비활성화된 슬롯입니다.");
+        }
         this.active = false;
     }
 
     public void activate() {
+        if (active) {
+            throw new IllegalStateException("이미 활성화된 슬롯입니다.");
+        }
         this.active = true;
     }
 }

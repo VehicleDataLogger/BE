@@ -60,4 +60,58 @@ class SlotOccupancyTest {
         assertThat(occupancy.getOccupiedSince()).isNull();
         assertThat(occupancy.getUpdatedAt()).isEqualTo(releaseTime);
     }
+
+    @Test
+    @DisplayName("비어있는 슬롯을 해제해도 상태 변화 없이 안전하게 반환한다")
+    void releaseEmptySlotIsNoop() {
+        SlotOccupancy occupancy = new SlotOccupancy();
+        LocalDateTime now = LocalDateTime.now();
+
+        occupancy.release(now);
+
+        assertThat(occupancy.isOccupied()).isFalse();
+        assertThat(occupancy.getVehicle()).isNull();
+        assertThat(occupancy.getCurrentSession()).isNull();
+        assertThat(occupancy.getOccupiedSince()).isNull();
+        assertThat(occupancy.getUpdatedAt()).isNull();
+    }
+
+    @Test
+    @DisplayName("현재 세션 보유 여부(hasCurrentSession)를 분기별로 확인한다")
+    void hasCurrentSessionCheck() {
+        SlotOccupancy occupancy = new SlotOccupancy();
+        assertThat(occupancy.hasCurrentSession()).isFalse();
+
+        LocalDateTime now = LocalDateTime.now();
+        ParkingHistory session = ParkingHistory.start(zone, slot, vehicle, now);
+        occupancy.occupy(vehicle, session, now);
+
+        assertThat(occupancy.hasCurrentSession()).isTrue();
+    }
+
+    @Test
+    @DisplayName("기본 생성자는 비점유 상태와 null 참조를 초기값으로 가진다")
+    void defaultConstructorInitialState() {
+        SlotOccupancy occupancy = new SlotOccupancy();
+
+        assertThat(occupancy.isOccupied()).isFalse();
+        assertThat(occupancy.getVehicle()).isNull();
+        assertThat(occupancy.getCurrentSession()).isNull();
+        assertThat(occupancy.getOccupiedSince()).isNull();
+        assertThat(occupancy.getUpdatedAt()).isNull();
+    }
+
+    @Test
+    @DisplayName("모든 필드를 받는 생성자는 전달된 값으로 상태를 설정한다")
+    void parameterizedConstructorSetsState() {
+        LocalDateTime now = LocalDateTime.now();
+        ParkingHistory session = ParkingHistory.start(zone, slot, vehicle, now.minusMinutes(5));
+        SlotOccupancy occupancy = new SlotOccupancy(slot, session, vehicle, true, now.minusMinutes(5), now);
+
+        assertThat(occupancy.isOccupied()).isTrue();
+        assertThat(occupancy.getVehicle()).isEqualTo(vehicle);
+        assertThat(occupancy.getCurrentSession()).isEqualTo(session);
+        assertThat(occupancy.getOccupiedSince()).isEqualTo(now.minusMinutes(5));
+        assertThat(occupancy.getUpdatedAt()).isEqualTo(now);
+    }
 }

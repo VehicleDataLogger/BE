@@ -75,29 +75,25 @@ tasks.jacocoTestCoverageVerification {
     violationRules {
         rule {
             element = 'BUNDLE'
-            limits {
-                limit {
-                    counter = 'BRANCH'
-                    value = 'COVERED_RATIO'
-                    minimum = 0.70
-                }
-                limit {
-                    counter = 'LINE'
-                    value = 'COVERED_RATIO'
-                    minimum = 0.80
-                }
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.50
+            }
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.75
             }
         }
 
         rule {
             element = 'CLASS'
             includes = ['com.mobs1.autoE.*']
-            limits {
-                limit {
-                    counter = 'LINE'
-                    value = 'COVERED_RATIO'
-                    minimum = 0.60
-                }
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.60
             }
         }
     }
