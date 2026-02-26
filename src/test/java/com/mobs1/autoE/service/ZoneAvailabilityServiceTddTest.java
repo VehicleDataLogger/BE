@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
+import com.mobs1.autoE.domain.zone.dto.TypeAvailabilityResponse;
+import com.mobs1.autoE.domain.zone.service.ZoneAvailabilityService;
+import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.entity.Zone;
 import com.mobs1.autoE.domain.zone.entity.ZoneAvailability;
 import com.mobs1.autoE.global.enums.SlotCategory;
@@ -63,13 +66,13 @@ class ZoneAvailabilityServiceTddTest {
     void listAllZones() {
         when(repository.findAll()).thenReturn(List.of(zoneA, zoneB, zoneC));
 
-        List<ZoneAvailabilityView> result = service.getAllZonesAvailability();
+        List<ZoneAvailabilityResponse> result = service.getAllZonesAvailability();
 
         assertThat(result).hasSize(3);
-        int sumAvailable = result.stream().mapToInt(ZoneAvailabilityView::availableSlots).sum();
-        int sumGeneral = result.stream().mapToInt(ZoneAvailabilityView::generalAvailable).sum();
-        int sumEv = result.stream().mapToInt(ZoneAvailabilityView::evAvailable).sum();
-        int sumDisabled = result.stream().mapToInt(ZoneAvailabilityView::disabledAvailable).sum();
+        int sumAvailable = result.stream().mapToInt(ZoneAvailabilityResponse::availableSlots).sum();
+        int sumGeneral = result.stream().mapToInt(ZoneAvailabilityResponse::generalAvailable).sum();
+        int sumEv = result.stream().mapToInt(ZoneAvailabilityResponse::evAvailable).sum();
+        int sumDisabled = result.stream().mapToInt(ZoneAvailabilityResponse::disabledAvailable).sum();
 
         assertThat(sumAvailable).isEqualTo(48 + 30 + 15);
         assertThat(sumGeneral).isEqualTo(12 + 20 + 8);
@@ -82,9 +85,11 @@ class ZoneAvailabilityServiceTddTest {
     void getAllZoneAvailableCount() {
         when(repository.findAll()).thenReturn(List.of(zoneA, zoneB, zoneC));
 
-        List<ZoneAvailabilityView> result = service.getAllZonesAvailability();
+        List<ZoneAvailabilityResponse> result = service.getAllZonesAvailability();
 
-        assertThat(result).isEqualTo(48);
+        int sumAvailable = result.stream().mapToInt(ZoneAvailabilityResponse::availableSlots).sum();
+
+        assertThat(sumAvailable).isEqualTo(48 + 30 + 15);
     }
 
     @Test
@@ -92,10 +97,12 @@ class ZoneAvailabilityServiceTddTest {
     void getZoneTotalAvailability() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
-        ZoneAvailabilityView view = service.getZoneAvailability(1);
+        ZoneAvailabilityResponse view = service.getZoneAvailability(1);
 
         assertThat(view.availableSlots()).isEqualTo(48);
         assertThat(view.zoneName()).isEqualTo("A");
+        assertThat(view.totalSlots()).isEqualTo(100);
+        assertThat(view.occupiedSlots()).isEqualTo(52);
     }
 
     @Test
@@ -113,9 +120,11 @@ class ZoneAvailabilityServiceTddTest {
     void getGeneralAvailability() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
-        TypeAvailabilityView view = service.getZoneTypeAvailability(1, SlotCategory.GENERAL);
+        TypeAvailabilityResponse view = service.getZoneTypeAvailability(1, SlotCategory.GENERAL);
 
         assertThat(view.available()).isEqualTo(12);
+        assertThat(view.total()).isEqualTo(80);
+        assertThat(view.occupied()).isEqualTo(68);
     }
 
     @Test
@@ -133,9 +142,11 @@ class ZoneAvailabilityServiceTddTest {
     void getEvAvailability() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
-        TypeAvailabilityView view = service.getZoneTypeAvailability(1, SlotCategory.EV);
+        TypeAvailabilityResponse view = service.getZoneTypeAvailability(1, SlotCategory.EV);
 
         assertThat(view.available()).isEqualTo(3);
+        assertThat(view.total()).isEqualTo(10);
+        assertThat(view.occupied()).isEqualTo(7);
     }
 
     @Test
@@ -153,13 +164,15 @@ class ZoneAvailabilityServiceTddTest {
     void getDisabledAvailability() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
-        TypeAvailabilityView view = service.getZoneTypeAvailability(1, SlotCategory.DISABLED);
+        TypeAvailabilityResponse view = service.getZoneTypeAvailability(1, SlotCategory.DISABLED);
 
         assertThat(view.available()).isEqualTo(3);
+        assertThat(view.total()).isEqualTo(10);
+        assertThat(view.occupied()).isEqualTo(7);
     }
 
     @Test
-    @DisplayName("EV 타입 여석 num 반환한다")
+    @DisplayName("Disabled 타입 여석 num 반환한다")
     void getDisableAvailableCount() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 

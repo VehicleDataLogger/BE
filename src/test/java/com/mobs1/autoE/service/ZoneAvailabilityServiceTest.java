@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
+import com.mobs1.autoE.domain.zone.dto.TypeAvailabilityResponse;
+import com.mobs1.autoE.domain.zone.service.ZoneAvailabilityService;
+import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.entity.Zone;
 import com.mobs1.autoE.domain.zone.entity.ZoneAvailability;
 import com.mobs1.autoE.global.enums.SlotCategory;
@@ -40,27 +43,29 @@ class ZoneAvailabilityServiceTest {
     }
 
     @Test
-    @DisplayName("전체 존의 여석 정보를 목록으로 반환한다")
+    @DisplayName("전체 존의 여석 수를 목록으로 반환한다")
     void getAllZonesAvailability() {
         when(repository.findAll()).thenReturn(List.of(availability));
 
-        List<ZoneAvailabilityView> result = service.getAllZonesAvailability();
+        List<ZoneAvailabilityResponse> result = service.getAllZonesAvailability();
 
         assertThat(result).hasSize(1);
-        ZoneAvailabilityView view = result.getFirst();
+        ZoneAvailabilityResponse view = result.getFirst();
         assertThat(view.zoneName()).isEqualTo("A");
-        assertThat(view.availableSlots()).isEqualTo(7);
-        assertThat(view.generalAvailable()).isEqualTo(4);
+        assertThat(view.availableSlots()).isEqualTo(48);
+        assertThat(view.generalAvailable()).isEqualTo(12);
+        assertThat(view.evAvailable()).isEqualTo(3);
+        assertThat(view.disabledAvailable()).isEqualTo(3);
     }
 
     @Test
-    @DisplayName("존 ID로 여석 정보를 조회한다")
+    @DisplayName("존 ID로 여석 수를 조회한다")
     void getZoneAvailability() {
         when(repository.findByZoneId(null)).thenReturn(Optional.of(availability));
 
-        ZoneAvailabilityView view = service.getZoneAvailability(null);
+        ZoneAvailabilityResponse view = service.getZoneAvailability(null);
 
-        assertThat(view.availableSlots()).isEqualTo(7);
+        assertThat(view.availableSlots()).isEqualTo(48);
     }
 
     @Test
@@ -73,16 +78,16 @@ class ZoneAvailabilityServiceTest {
     }
 
     @Test
-    @DisplayName("타입별 여석 정보를 GENERAL/EV/DISABLED로 조회한다")
+    @DisplayName("타입별 여석 수를 GENERAL/EV/DISABLED로 조회한다")
     void getZoneTypeAvailability() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(availability));
 
-        TypeAvailabilityView general = service.getZoneTypeAvailability(1, SlotCategory.GENERAL);
-        TypeAvailabilityView ev = service.getZoneTypeAvailability(1, SlotCategory.EV);
-        TypeAvailabilityView disabled = service.getZoneTypeAvailability(1, SlotCategory.DISABLED);
+        TypeAvailabilityResponse general = service.getZoneTypeAvailability(1, SlotCategory.GENERAL);
+        TypeAvailabilityResponse ev = service.getZoneTypeAvailability(1, SlotCategory.EV);
+        TypeAvailabilityResponse disabled = service.getZoneTypeAvailability(1, SlotCategory.DISABLED);
 
-        assertThat(general.available()).isEqualTo(4);
-        assertThat(ev.available()).isEqualTo(2);
-        assertThat(disabled.available()).isEqualTo(1);
+        assertThat(general.available()).isEqualTo(12);
+        assertThat(ev.available()).isEqualTo(3);
+        assertThat(disabled.available()).isEqualTo(3);
     }
 }

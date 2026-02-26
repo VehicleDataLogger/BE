@@ -1,8 +1,8 @@
-package com.mobs1.autoE.service;
+package com.mobs1.autoE.domain.zone.dto;
 
 import com.mobs1.autoE.domain.zone.entity.ZoneAvailability;
 
-public record ZoneAvailabilityView(
+public record ZoneAvailabilityResponse(
         Integer zoneId,
         String zoneName,
         int totalSlots,
@@ -12,8 +12,8 @@ public record ZoneAvailabilityView(
         int evAvailable,
         int disabledAvailable
 ) {
-    public static ZoneAvailabilityView from(ZoneAvailability availability) {
-        return new ZoneAvailabilityView(
+    public static ZoneAvailabilityResponse from(ZoneAvailability availability) {
+        return new ZoneAvailabilityResponse(
                 availability.getId(),
                 availability.getZone().getName(),
                 availability.getTotalSlots(),
