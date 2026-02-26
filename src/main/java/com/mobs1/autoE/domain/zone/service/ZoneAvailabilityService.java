@@ -86,4 +86,12 @@ public class ZoneAvailabilityService {
                     availability.getDisabledAvailable());
         };
     }
+
+    public Long getTotalAvailableByType(SlotCategory category) {
+        return switch (category) {
+            case GENERAL -> availabilityRepository.sumGeneralAvailable();
+            case EV -> availabilityRepository.sumEvAvailable();
+            case DISABLED -> availabilityRepository.sumDisabledAvailable();
+        };
+    }
 }
