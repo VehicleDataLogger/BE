@@ -65,7 +65,7 @@ tasks.jacocoTestReport {
                     '**/config/**',
                     '**/*Application*',
                     '**/dto/**',
-                    '**/apiResponse/**'
+                    '**/global/apiResponse/**'
             ])
         }))
     }
