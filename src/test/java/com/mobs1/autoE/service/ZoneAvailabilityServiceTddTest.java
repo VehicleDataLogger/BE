@@ -59,6 +59,13 @@ class ZoneAvailabilityServiceTddTest {
                 80, 72, 8,
                 10, 7, 3,
                 10, 6, 4, now);
+
+        // 기본 조회 스텁
+        when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
+        when(repository.findAvailableSlotsByZoneId(1)).thenReturn(Optional.of(zoneA.getAvailableSlots()));
+        when(repository.findGeneralAvailableByZoneId(1)).thenReturn(Optional.of(zoneA.getGeneralAvailable()));
+        when(repository.findEvAvailableByZoneId(1)).thenReturn(Optional.of(zoneA.getEvAvailable()));
+        when(repository.findDisabledAvailableByZoneId(1)).thenReturn(Optional.of(zoneA.getDisabledAvailable()));
     }
 
     @Test
@@ -130,8 +137,6 @@ class ZoneAvailabilityServiceTddTest {
     @Test
     @DisplayName("General 타입 여석 num 반환")
     void getGeneralAvailableCount() {
-        when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
-
         int available = service.getZoneTypeAvailableCount(1, SlotCategory.GENERAL);
 
         assertThat(available).isEqualTo(12);
@@ -152,8 +157,6 @@ class ZoneAvailabilityServiceTddTest {
     @Test
     @DisplayName("EV 타입 여석 num 반환")
     void getEvAvailableCount() {
-        when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
-
         int available = service.getZoneTypeAvailableCount(1, SlotCategory.EV);
 
         assertThat(available).isEqualTo(3);
@@ -174,8 +177,6 @@ class ZoneAvailabilityServiceTddTest {
     @Test
     @DisplayName("Disabled 타입 여석 num 반환")
     void getDisableAvailableCount() {
-        when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
-
         int available = service.getZoneTypeAvailableCount(1, SlotCategory.DISABLED);
 
         assertThat(available).isEqualTo(3);
