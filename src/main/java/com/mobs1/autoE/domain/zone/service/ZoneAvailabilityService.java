@@ -45,12 +45,18 @@ public class ZoneAvailabilityService {
 
     // A 존의 전체 여석 수 반환
     public int getZoneAvailableCount(Integer zoneId) {
-        return getZoneAvailability(zoneId).availableSlots();
+        return availabilityRepository.findAvailableSlotsByZoneId(zoneId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
     }
 
     // A 존의 타입 별 여석 수 반환
     public int getZoneTypeAvailableCount(Integer zoneId, SlotCategory category) {
-        return getZoneTypeAvailability(zoneId, category).available();
+        return (switch (category) {
+            case GENERAL -> availabilityRepository.findGeneralAvailableByZoneId(zoneId);
+            case EV -> availabilityRepository.findEvAvailableByZoneId(zoneId);
+            case DISABLED -> availabilityRepository.findDisabledAvailableByZoneId(zoneId);
+            default -> throw new BusinessException(ErrorCode.SLOT_CATEGORY_NOT_SUPPORTED);
+        }).orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
     }
 
     // 타입 별 정보조회 메서드
