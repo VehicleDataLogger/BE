@@ -33,9 +33,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleUnexpected(Exception ex) {
-        ErrorCode code = ErrorCode.INVALID_INPUT;
         return ResponseEntity
-                .status(code.getHttpStatus())
-                .body(ApiResponse.error(code.getCode(), code.getMessage()));
+                .status(org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.error("E999", "예상치 못한 오류가 발생했습니다."));
     }
 }
