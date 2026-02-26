@@ -21,4 +21,14 @@ public interface ZoneAvailabilityRepository extends JpaRepository<ZoneAvailabili
 
     @Query("select za.disabledAvailable from ZoneAvailability za where za.id = :zoneId")
     Optional<Integer> findDisabledAvailableByZoneId(@Param("zoneId") Integer zoneId);
+
+    // 전체 존 타입별 가용 합계
+    @Query("select coalesce(sum(za.generalAvailable),0) from ZoneAvailability za")
+    int sumGeneralAvailable();
+
+    @Query("select coalesce(sum(za.evAvailable),0) from ZoneAvailability za")
+    int sumEvAvailable();
+
+    @Query("select coalesce(sum(za.disabledAvailable),0) from ZoneAvailability za")
+    int sumDisabledAvailable();
 }

@@ -88,12 +88,10 @@ public class ZoneAvailabilityService {
     }
 
     public int getTotalAvailableByType(SlotCategory category) {
-        return availabilityRepository.findAll().stream()
-        .mapToInt(za -> switch (category) {
-            case GENERAL -> za.getGeneralAvailable();
-            case EV -> za.getEvAvailable();
-            case DISABLED -> za.getDisabledAvailable();
-            })
-        .sum();
+        return switch (category) {
+            case GENERAL -> availabilityRepository.sumGeneralAvailable();
+            case EV -> availabilityRepository.sumEvAvailable();
+            case DISABLED -> availabilityRepository.sumDisabledAvailable();
+        };
     }
 }
