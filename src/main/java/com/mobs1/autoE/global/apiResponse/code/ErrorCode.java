@@ -8,8 +8,12 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    // 사용자 (E001~E099)
-    USER_NOT_FOUND(HttpStatus.NOT_FOUND, "E001", "사용자를 찾을 수 없습니다.");
+    // 공통 (E000~E009)
+    INVALID_INPUT(HttpStatus.BAD_REQUEST, "E000", "잘못된 요청입니다."),
+
+    // 존/주차 (E100~E199)
+    ZONE_NOT_FOUND(HttpStatus.NOT_FOUND, "E100", "존 정보를 찾을 수 없습니다."),
+    SLOT_CATEGORY_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "E101", "지원하지 않는 슬롯 타입입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

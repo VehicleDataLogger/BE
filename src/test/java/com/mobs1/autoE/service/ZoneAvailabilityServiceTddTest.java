@@ -9,6 +9,7 @@ import com.mobs1.autoE.domain.zone.service.ZoneAvailabilityService;
 import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.entity.Zone;
 import com.mobs1.autoE.domain.zone.entity.ZoneAvailability;
+import com.mobs1.autoE.global.apiResponse.exception.BusinessException;
 import com.mobs1.autoE.global.enums.SlotCategory;
 import com.mobs1.autoE.repository.ZoneAvailabilityRepository;
 import java.time.LocalDateTime;
@@ -18,7 +19,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.web.server.ResponseStatusException;
 
 /**
  * TDD: 서비스 요구사항을 먼저 테스트로 명세
@@ -187,6 +187,6 @@ class ZoneAvailabilityServiceTddTest {
         when(repository.findByZoneId(99)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.getZoneAvailability(99))
-                .isInstanceOf(ResponseStatusException.class);
+                .isInstanceOf(BusinessException.class);
     }
 }

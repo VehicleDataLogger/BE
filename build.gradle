@@ -64,7 +64,8 @@ tasks.jacocoTestReport {
             fileTree(dir: dir, exclude: [
                     '**/config/**',
                     '**/*Application*',
-                    '**/dto/**'
+                    '**/dto/**',
+                    '**/global/apiResponse/**'
             ])
         }))
     }

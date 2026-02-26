@@ -65,6 +65,15 @@ public class ApiResponse<T> {
                 .build();
     }
 
+    public static <T> ApiResponse<T> error(String code, String message) {
+        return ApiResponse.<T>builder()
+                .success(false)
+                .code(code)
+                .message(message)
+                .data(null)
+                .build();
+    }
+
     public static <T> ApiResponse<T> ok() {
         return success(SuccessCode.SUCCESS_READ);
     }

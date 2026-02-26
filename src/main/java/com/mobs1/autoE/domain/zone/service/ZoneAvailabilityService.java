@@ -3,14 +3,14 @@ package com.mobs1.autoE.domain.zone.service;
 import com.mobs1.autoE.domain.zone.dto.TypeAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.entity.ZoneAvailability;
+import com.mobs1.autoE.global.apiResponse.code.ErrorCode;
+import com.mobs1.autoE.global.apiResponse.exception.BusinessException;
 import com.mobs1.autoE.global.enums.SlotCategory;
 import com.mobs1.autoE.repository.ZoneAvailabilityRepository;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Transactional(readOnly = true)
@@ -33,13 +33,13 @@ public class ZoneAvailabilityService {
 
     public ZoneAvailabilityResponse getZoneAvailability(Integer zoneId) {
         ZoneAvailability availability = availabilityRepository.findByZoneId(zoneId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
         return ZoneAvailabilityResponse.from(availability);
     }
 
     public TypeAvailabilityResponse getZoneTypeAvailability(Integer zoneId, SlotCategory category) {
         ZoneAvailability availability = availabilityRepository.findByZoneId(zoneId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
         return toTypeAvailabilityResponse(availability, category);
     }
 
@@ -56,7 +56,7 @@ public class ZoneAvailabilityService {
     // 타입 별 정보조회 메서드
     private TypeAvailabilityResponse toTypeAvailabilityResponse(ZoneAvailability availability, SlotCategory category) {
         if (category == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "지원하지 않는 슬롯 타입입니다.");
+            throw new BusinessException(ErrorCode.SLOT_CATEGORY_NOT_SUPPORTED);
         }
 
         return switch (category) {
