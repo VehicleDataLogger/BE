@@ -87,7 +87,7 @@ public class ZoneAvailabilityService {
         };
     }
 
-    public int getTotalAvailableByType(SlotCategory category) {
+    public Long getTotalAvailableByType(SlotCategory category) {
         return switch (category) {
             case GENERAL -> availabilityRepository.sumGeneralAvailable();
             case EV -> availabilityRepository.sumEvAvailable();

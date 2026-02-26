@@ -28,9 +28,9 @@ class ZoneAvailabilityServiceCapacityTest {
     @Test
     @DisplayName("전체 존에서 타입별 빈자리 를 반환한다")
     void getGlobalAvailableByType() {
-        when(repository.sumGeneralAvailable()).thenReturn(60);
-        when(repository.sumEvAvailable()).thenReturn(13);
-        when(repository.sumDisabledAvailable()).thenReturn(-3);
+        when(repository.sumGeneralAvailable()).thenReturn(60L);
+        when(repository.sumEvAvailable()).thenReturn(13L);
+        when(repository.sumDisabledAvailable()).thenReturn(-3L);
 
         assertThat(service.getTotalAvailableByType(SlotCategory.GENERAL)).isEqualTo(60);
         assertThat(service.getTotalAvailableByType(SlotCategory.EV)).isEqualTo(13);

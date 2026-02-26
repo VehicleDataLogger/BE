@@ -35,7 +35,7 @@ class ZoneAvailabilityControllerTypeCountIT {
     @Test
     @DisplayName("전체 Zone에서 General 타입 기준으로 가용 슬롯 수를 반환")
     void getTotalAvailableByType() throws Exception {
-        Mockito.when(service.getTotalAvailableByType(SlotCategory.GENERAL)).thenReturn(60);
+        Mockito.when(service.getTotalAvailableByType(SlotCategory.GENERAL)).thenReturn(1L);
 
         mockMvc.perform(get("/zones/availability/type/GENERAL/count"))
                 .andExpect(status().isOk())

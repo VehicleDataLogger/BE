@@ -34,7 +34,7 @@ public class ZoneAvailabilityController {
     // 전체 존 타입 별 여석 수 반환
     @Operation(summary = "전체 Zone 타입 별 여석 수 반환", description = "전체 주차 가용 대수를 기준으로, 특정 타입 별로 주차 가능한 수를 반환합니다.")
     @GetMapping("/availability/type/{type}/count")
-    public ResponseEntity<ApiResponse<Integer>> getTotalAvailableByType(@PathVariable SlotCategory type) {
+    public ResponseEntity<ApiResponse<Long>> getTotalAvailableByType(@PathVariable SlotCategory type) {
         return ok(zoneAvailabilityService.getTotalAvailableByType(type));
     }
 
