@@ -1,4 +1,4 @@
-package com.mobs1.autoE.domain;
+package com.mobs1.autoE.domain.zone.entity;
 
 import com.mobs1.autoE.global.enums.SlotCategory;
 import jakarta.persistence.Column;

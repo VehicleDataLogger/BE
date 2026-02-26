@@ -1,5 +1,7 @@
-package com.mobs1.autoE.domain;
+package com.mobs1.autoE.domain.park;
 
+import com.mobs1.autoE.domain.zone.entity.Vehicle;
+import com.mobs1.autoE.domain.zone.entity.Zone;
 import com.mobs1.autoE.global.enums.ParkingStatus;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

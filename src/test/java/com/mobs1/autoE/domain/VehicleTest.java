@@ -3,6 +3,7 @@ package com.mobs1.autoE.domain;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.mobs1.autoE.domain.zone.entity.Vehicle;
 import com.mobs1.autoE.global.enums.SlotCategory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
