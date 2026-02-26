@@ -62,7 +62,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("전체 존 여석 리스트를 반환한다")
+    @DisplayName("전체 존 여석 리스트를 반환")
     void listAllZones() {
         when(repository.findAll()).thenReturn(List.of(zoneA, zoneB, zoneC));
 
@@ -81,7 +81,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("전체 존 여석 수 합계를 반환한다")
+    @DisplayName("전체 존 여석 수 합계를 반환")
     void getAllZoneAvailableCount() {
         when(repository.findAll()).thenReturn(List.of(zoneA, zoneB, zoneC));
 
@@ -93,7 +93,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("특정 존 전체 여석을 조회한다")
+    @DisplayName("특정 존 전체 여석을 조회")
     void getZoneTotalAvailability() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
@@ -106,7 +106,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("특정 존 전체 여석 수만 반환한다")
+    @DisplayName("특정 존 전체 여석 수만 반환")
     void getZoneAvailableCount() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
@@ -116,7 +116,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("General 타입 여석을 조회한다")
+    @DisplayName("General 타입 여석을 조회")
     void getGeneralAvailability() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
@@ -128,7 +128,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("General 타입 여석 num 반환한다")
+    @DisplayName("General 타입 여석 num 반환")
     void getGeneralAvailableCount() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
@@ -138,7 +138,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("EV 타입 여석을 조회한다")
+    @DisplayName("EV 타입 여석을 조회")
     void getEvAvailability() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
@@ -150,7 +150,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("EV 타입 여석 num 반환한다")
+    @DisplayName("EV 타입 여석 num 반환")
     void getEvAvailableCount() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
@@ -160,7 +160,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("Disabled 타입 여석을 조회한다")
+    @DisplayName("Disabled 타입 여석을 조회")
     void getDisabledAvailability() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
@@ -172,7 +172,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("Disabled 타입 여석 num 반환한다")
+    @DisplayName("Disabled 타입 여석 num 반환")
     void getDisableAvailableCount() {
         when(repository.findByZoneId(1)).thenReturn(Optional.of(zoneA));
 
@@ -182,7 +182,7 @@ class ZoneAvailabilityServiceTddTest {
     }
 
     @Test
-    @DisplayName("존이 없으면 404 예외를 던진다")
+    @DisplayName("존이 없으면 404 예외 처리")
     void zoneNotFound() {
         when(repository.findByZoneId(99)).thenReturn(Optional.empty());
 

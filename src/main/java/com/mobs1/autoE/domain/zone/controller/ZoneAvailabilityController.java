@@ -23,46 +23,55 @@ public class ZoneAvailabilityController {
         this.zoneAvailabilityService = zoneAvailabilityService;
     }
 
+    // 전체 여석 조회
     @GetMapping("/availability")
     public ResponseEntity<ApiResponse<List<ZoneAvailabilityResponse>>> getAllZonesAvailability() {
         return ok(zoneAvailabilityService.getAllZonesAvailability());
     }
 
+    // A존 전체 여석 정보 반환
     @GetMapping("/{zoneId}/availability")
     public ResponseEntity<ApiResponse<ZoneAvailabilityResponse>> getZoneAvailability(@PathVariable Integer zoneId) {
         return ok(zoneAvailabilityService.getZoneAvailability(zoneId));
     }
 
+    // A존 전체 여석 수 반환
     @GetMapping("/{zoneId}/availability/count")
     public ResponseEntity<ApiResponse<Integer>> getZoneAvailableCount(@PathVariable Integer zoneId) {
         return ok(zoneAvailabilityService.getZoneAvailableCount(zoneId));
     }
 
+    // A존 일반 타입 여석 정보 반환
     @GetMapping("/{zoneId}/availability/general")
     public ResponseEntity<ApiResponse<TypeAvailabilityResponse>> getGeneralAvailability(@PathVariable Integer zoneId) {
         return ok(zoneAvailabilityService.getZoneTypeAvailability(zoneId, SlotCategory.GENERAL));
     }
 
+    // A존 일반 타입 여석 수 반환
     @GetMapping("/{zoneId}/availability/general/count")
     public ResponseEntity<ApiResponse<Integer>> getGeneralAvailableCount(@PathVariable Integer zoneId) {
         return ok(zoneAvailabilityService.getZoneTypeAvailableCount(zoneId, SlotCategory.GENERAL));
     }
 
+    // A존 EV 타입 여석 정보 반환
     @GetMapping("/{zoneId}/availability/ev")
     public ResponseEntity<ApiResponse<TypeAvailabilityResponse>> getEvAvailability(@PathVariable Integer zoneId) {
         return ok(zoneAvailabilityService.getZoneTypeAvailability(zoneId, SlotCategory.EV));
     }
 
+    // A존 EV 타입 여석 수 반환
     @GetMapping("/{zoneId}/availability/ev/count")
     public ResponseEntity<ApiResponse<Integer>> getEvAvailableCount(@PathVariable Integer zoneId) {
         return ok(zoneAvailabilityService.getZoneTypeAvailableCount(zoneId, SlotCategory.EV));
     }
 
+    // A존 Disabled 타입 여석 정보 반환
     @GetMapping("/{zoneId}/availability/disabled")
     public ResponseEntity<ApiResponse<TypeAvailabilityResponse>> getDisabledAvailability(@PathVariable Integer zoneId) {
         return ok(zoneAvailabilityService.getZoneTypeAvailability(zoneId, SlotCategory.DISABLED));
     }
 
+    // A존 Disabled 타입 여석 수 반환
     @GetMapping("/{zoneId}/availability/disabled/count")
     public ResponseEntity<ApiResponse<Integer>> getDisabledAvailableCount(@PathVariable Integer zoneId) {
         return ok(zoneAvailabilityService.getZoneTypeAvailableCount(zoneId, SlotCategory.DISABLED));
