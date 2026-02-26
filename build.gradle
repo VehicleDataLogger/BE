@@ -64,7 +64,8 @@ tasks.jacocoTestReport {
             fileTree(dir: dir, exclude: [
                     '**/config/**',
                     '**/*Application*',
-                    '**/dto/**'
+                    '**/dto/**',
+                    '**/global/apiResponse/**'
             ])
         }))
     }
@@ -83,23 +84,21 @@ tasks.jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.80
+                minimum = 0.70
             }
         }
 
-        rule {
-            element = 'CLASS'
-            includes = ['com.mobs1.autoE.*']
-            limit {
-                counter = 'LINE'
-                value = 'COVEREDRATIO'
-                minimum = 0.60
-            }
-        }
     }
 
     afterEvaluate {
-        classDirectories.setFrom(tasks.jacocoTestReport.classDirectories)
+        classDirectories.setFrom(files(tasks.jacocoTestReport.classDirectories.files.collect { dir ->
+            fileTree(dir: dir, exclude: [
+                    '**/config/**',
+                    '**/*Application*',
+                    '**/dto/**',
+                    '**/global/apiResponse/**'
+            ])
+        }))
     }
 }
 

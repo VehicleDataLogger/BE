@@ -1,4 +1,4 @@
-package com.mobs1.autoE.domain;
+package com.mobs1.autoE.domain.park;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
