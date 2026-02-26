@@ -6,7 +6,7 @@ import com.mobs1.autoE.domain.zone.entity.ZoneAvailability;
 import com.mobs1.autoE.global.apiResponse.code.ErrorCode;
 import com.mobs1.autoE.global.apiResponse.exception.BusinessException;
 import com.mobs1.autoE.global.enums.SlotCategory;
-import com.mobs1.autoE.repository.ZoneAvailabilityRepository;
+import com.mobs1.autoE.domain.zone.repository.ZoneAvailabilityRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;

@@ -11,7 +11,7 @@ import com.mobs1.autoE.domain.zone.entity.Zone;
 import com.mobs1.autoE.domain.zone.entity.ZoneAvailability;
 import com.mobs1.autoE.global.apiResponse.exception.BusinessException;
 import com.mobs1.autoE.global.enums.SlotCategory;
-import com.mobs1.autoE.repository.ZoneAvailabilityRepository;
+import com.mobs1.autoE.domain.zone.repository.ZoneAvailabilityRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
