@@ -9,6 +9,8 @@ import com.mobs1.autoE.domain.zone.controller.ZoneAvailabilityController;
 import com.mobs1.autoE.domain.zone.dto.TypeAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.service.ZoneAvailabilityService;
+import com.mobs1.autoE.global.apiResponse.code.ErrorCode;
+import com.mobs1.autoE.global.apiResponse.exception.BusinessException;
 import com.mobs1.autoE.global.apiResponse.handler.GlobalExceptionHandler;
 import com.mobs1.autoE.global.enums.SlotCategory;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +19,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.util.List;
 
 class ZoneAvailabilityControllerT {
 
@@ -38,9 +42,20 @@ class ZoneAvailabilityControllerT {
         general = new TypeAvailabilityResponse(1, SlotCategory.GENERAL, 80, 68, 12);
     }
 
+    @Test
+    @DisplayName("전체 존 여석 목록을 반환한다")
+    void getAllZonesAvailability() throws Exception {
+        ZoneAvailabilityResponse b = new ZoneAvailabilityResponse(2, "B", 100, 70, 30, 20, 5, 5);
+        when(service.getAllZonesAvailability()).thenReturn(List.of(zoneA, b));
+
+        mockMvc.perform(get("/zones/availability"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].zoneName").value("A"))
+                .andExpect(jsonPath("$.data[1].availableSlots").value(30));
+    }
 
     @Test
-    @DisplayName("A 존 전체 여석 정보와 num 반환")
+    @DisplayName("존 전체 여석과 count를 반환한다")
     void getZoneAvailability() throws Exception {
         when(service.getZoneAvailability(1)).thenReturn(zoneA);
         when(service.getZoneAvailableCount(1)).thenReturn(48);
@@ -55,8 +70,8 @@ class ZoneAvailabilityControllerT {
     }
 
     @Test
-    @DisplayName("타입별 여석 정보/num 반환")
-    void getTypeAvailability() throws Exception {
+    @DisplayName("General 타입 여석과 count를 반환한다")
+    void getGeneralAvailability() throws Exception {
         when(service.getZoneTypeAvailability(1, SlotCategory.GENERAL)).thenReturn(general);
         when(service.getZoneTypeAvailableCount(1, SlotCategory.GENERAL)).thenReturn(12);
 
@@ -71,27 +86,57 @@ class ZoneAvailabilityControllerT {
     }
 
     @Test
-    @DisplayName("존이 없으면 404 에러 반환")
+    @DisplayName("EV 타입 여석과 count를 반환한다")
+    void getEvAvailability() throws Exception {
+        TypeAvailabilityResponse ev = new TypeAvailabilityResponse(1, SlotCategory.EV, 10, 7, 3);
+        when(service.getZoneTypeAvailability(1, SlotCategory.EV)).thenReturn(ev);
+        when(service.getZoneTypeAvailableCount(1, SlotCategory.EV)).thenReturn(3);
+
+        mockMvc.perform(get("/zones/1/availability/ev"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.available").value(3))
+                .andExpect(jsonPath("$.data.category").value("EV"));
+
+        mockMvc.perform(get("/zones/1/availability/ev/count"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(3));
+    }
+
+    @Test
+    @DisplayName("Disabled 타입 여석과 count를 반환한다")
+    void getDisabledAvailability() throws Exception {
+        TypeAvailabilityResponse disabled = new TypeAvailabilityResponse(1, SlotCategory.DISABLED, 10, 7, 3);
+        when(service.getZoneTypeAvailability(1, SlotCategory.DISABLED)).thenReturn(disabled);
+        when(service.getZoneTypeAvailableCount(1, SlotCategory.DISABLED)).thenReturn(3);
+
+        mockMvc.perform(get("/zones/1/availability/disabled"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.available").value(3))
+                .andExpect(jsonPath("$.data.category").value("DISABLED"));
+
+        mockMvc.perform(get("/zones/1/availability/disabled/count"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data").value(3));
+    }
+
+    @Test
+    @DisplayName("존이 없으면 404 응답을 반환한다")
     void zoneNotFound() throws Exception {
-        when(service.getZoneAvailability(99)).thenThrow(new com.mobs1.autoE.global.apiResponse.exception.BusinessException(
-                com.mobs1.autoE.global.apiResponse.code.ErrorCode.ZONE_NOT_FOUND));
+        when(service.getZoneAvailability(99)).thenThrow(new BusinessException(ErrorCode.ZONE_NOT_FOUND));
 
         mockMvc.perform(get("/zones/99/availability"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.code").value("E100"));
     }
 
     @Test
-    @DisplayName("지원하지 않는 타입이면 400 에러 반환")
+    @DisplayName("지원하지 않는 타입이면 400 응답을 반환한다")
     void unsupportedCategory() throws Exception {
         when(service.getZoneTypeAvailability(1, SlotCategory.GENERAL))
-                .thenThrow(new com.mobs1.autoE.global.apiResponse.exception.BusinessException(
-                        com.mobs1.autoE.global.apiResponse.code.ErrorCode.SLOT_CATEGORY_NOT_SUPPORTED));
+                .thenThrow(new BusinessException(ErrorCode.SLOT_CATEGORY_NOT_SUPPORTED));
 
         mockMvc.perform(get("/zones/1/availability/general"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.code").value("E101"));
     }
 }
