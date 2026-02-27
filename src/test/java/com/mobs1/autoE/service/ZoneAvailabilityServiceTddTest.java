@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
+import com.mobs1.autoE.domain.park.repository.SlotOccupancyRepository;
 import com.mobs1.autoE.domain.zone.dto.TypeAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.service.ZoneAvailabilityService;
 import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
@@ -28,6 +29,7 @@ import org.mockito.Mockito;
 class ZoneAvailabilityServiceTddTest {
 
     private ZoneAvailabilityRepository repository;
+    private SlotOccupancyRepository slotOccupancyRepository;
     private ZoneAvailabilityService service;
 
     private ZoneAvailability zoneA;
@@ -37,7 +39,8 @@ class ZoneAvailabilityServiceTddTest {
     @BeforeEach
     void setUp() {
         repository = Mockito.mock(ZoneAvailabilityRepository.class);
-        service = new ZoneAvailabilityService(repository);
+        slotOccupancyRepository = Mockito.mock(SlotOccupancyRepository.class);
+        service = new ZoneAvailabilityService(repository, slotOccupancyRepository);
 
         Zone a = new Zone("A");
         Zone b = new Zone("B");

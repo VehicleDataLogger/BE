@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.mobs1.autoE.domain.zone.controller.ZoneAvailabilityController;
+import com.mobs1.autoE.domain.zone.dto.CurrentParkingLocationResponse;
 import com.mobs1.autoE.domain.zone.dto.TypeAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.service.ZoneAvailabilityService;
@@ -143,9 +144,23 @@ class ZoneAvailabilityControllerT {
     @Test
     @DisplayName("차량 번호로 현재 주차 위치(zone_id, slot_name)를 조회한다")
     void getCurrentParkingLocationByVehicleNumber() throws Exception {
+        when(service.getCurrentParkingLocation("12가3456"))
+                .thenReturn(new CurrentParkingLocationResponse("1", "A-12"));
+
         mockMvc.perform(get("/zones/vehicles/12가3456/current-parking"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.zone_id").value("Z-01"))
+                .andExpect(jsonPath("$.data.zone_id").value("1"))
                 .andExpect(jsonPath("$.data.slot_name").value("A-12"));
+    }
+
+    @Test
+    @DisplayName("현재 주차 정보가 없으면 404(E102)를 반환한다")
+    void currentParkingNotFound() throws Exception {
+        when(service.getCurrentParkingLocation("99다9999"))
+                .thenThrow(new BusinessException(ErrorCode.CURRENT_PARKING_NOT_FOUND));
+
+        mockMvc.perform(get("/zones/vehicles/99다9999/current-parking"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("E102"));
     }
 }

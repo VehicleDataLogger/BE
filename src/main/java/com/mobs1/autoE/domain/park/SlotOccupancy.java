@@ -67,6 +67,10 @@ public class SlotOccupancy {
         return occupied;
     }
 
+    public ParkingSlot getSlot() {
+        return slot;
+    }
+
     public ParkingHistory getCurrentSession() {
         return currentSession;
     }
