@@ -28,7 +28,7 @@
 `./.codex/skills/local-merge-gate/scripts/run_local_gate.sh`
 
 ## 7) 커밋 준비 점검
-`$commit-discipline 현재 변경이 구조/행동 분리 원칙을 지키는지 검증하고 커밋 메시지 템플릿을 제안해줘.`
+`$commit 현재 변경이 구조/행동 분리 원칙을 지키는지 검증하고 커밋 메시지 템플릿을 제안해줘.`
 
 ## 8) 다음 AC 반복
 `다음 AC로 같은 흐름(2~7단계)을 반복하자.`

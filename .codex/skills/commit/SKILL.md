@@ -1,5 +1,5 @@
 ---
-name: commit-discipline
+name: commit
 description: |
   Use when preparing to commit.
   Validate commit meets Tidy First rules.
