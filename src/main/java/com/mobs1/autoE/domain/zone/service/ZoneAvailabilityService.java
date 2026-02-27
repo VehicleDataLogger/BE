@@ -102,11 +102,20 @@ public class ZoneAvailabilityService {
     }
 
     public CurrentParkingLocationResponse getCurrentParkingLocation(String vehicleNum) {
-        SlotOccupancy occupancy = slotOccupancyRepository
+        SlotOccupancy occupancy = findCurrentOccupancy(vehicleNum);
+        return toCurrentParkingLocationResponse(occupancy);
+    }
+
+    private SlotOccupancy findCurrentOccupancy(String vehicleNum) {
+        return slotOccupancyRepository
                 .findFirstByVehicleVehicleNumAndOccupiedTrueOrderByOccupiedSinceDesc(vehicleNum)
                 .orElseThrow(() -> new BusinessException(ErrorCode.CURRENT_PARKING_NOT_FOUND));
+    }
 
+    private CurrentParkingLocationResponse toCurrentParkingLocationResponse(SlotOccupancy occupancy) {
+        var slot = occupancy.getSlot();
         return new CurrentParkingLocationResponse(
-                String.valueOf(occupancy.getSlot().getZone().getId()), occupancy.getSlot().getSlotCode());
+                String.valueOf(slot.getZone().getId()),
+                slot.getSlotCode());
     }
 }
