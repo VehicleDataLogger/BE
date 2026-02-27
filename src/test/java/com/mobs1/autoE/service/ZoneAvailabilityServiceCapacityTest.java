@@ -3,6 +3,7 @@ package com.mobs1.autoE.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import com.mobs1.autoE.domain.park.repository.SlotOccupancyRepository;
 import com.mobs1.autoE.domain.zone.service.ZoneAvailabilityService;
 import com.mobs1.autoE.global.enums.SlotCategory;
 import com.mobs1.autoE.domain.zone.repository.ZoneAvailabilityRepository;
@@ -17,12 +18,14 @@ import org.mockito.Mockito;
 class ZoneAvailabilityServiceCapacityTest {
 
     private ZoneAvailabilityRepository repository;
+    private SlotOccupancyRepository slotOccupancyRepository;
     private ZoneAvailabilityService service;
 
     @BeforeEach
     void setUp() {
         repository = Mockito.mock(ZoneAvailabilityRepository.class);
-        service = new ZoneAvailabilityService(repository);
+        slotOccupancyRepository = Mockito.mock(SlotOccupancyRepository.class);
+        service = new ZoneAvailabilityService(repository, slotOccupancyRepository);
     }
 
     @Test

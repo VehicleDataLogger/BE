@@ -1,8 +1,10 @@
 package com.mobs1.autoE.domain.zone.controller;
 
+import com.mobs1.autoE.domain.zone.dto.CurrentParkingLocationResponse;
 import com.mobs1.autoE.domain.zone.dto.TypeAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.service.ZoneAvailabilityService;
+import com.mobs1.autoE.domain.zone.validator.VehicleNumberValidator;
 import com.mobs1.autoE.global.apiResponse.code.SuccessCode;
 import com.mobs1.autoE.global.apiResponse.response.ApiResponse;
 import com.mobs1.autoE.global.enums.SlotCategory;
@@ -88,6 +90,14 @@ public class ZoneAvailabilityController {
     @Operation(summary = "특정 Zone Disabled 타입 별 여석 수 반환", description = "특정 Zone의 주차 가용 대수를 기준으로, 특정 Zone에서 Disabled 타입이 주차 가능한 수를 반환합니다.")
     public ResponseEntity<ApiResponse<Integer>> getDisabledAvailableCount(@PathVariable Integer zoneId) {
         return ok(zoneAvailabilityService.getZoneTypeAvailableCount(zoneId, SlotCategory.DISABLED));
+    }
+
+    // 차량 번호 기준으로 주차한 지역 반환
+    @GetMapping("/vehicles/{vehicleNum}/current-parking")
+    @Operation(summary = "차량번호로 주차장 위치 반환", description = "입력한 차량 번호를 기준으로, 주차한 차량의 Zone_id와 slot_name을 반환합니다.")
+    public ResponseEntity<ApiResponse<CurrentParkingLocationResponse>> getCurrentParkingByVehicleNum(@PathVariable String vehicleNum) {
+        String normalizedVehicleNum = VehicleNumberValidator.normalizeAndValidate(vehicleNum);
+        return ok(zoneAvailabilityService.getCurrentParkingLocation(normalizedVehicleNum));
     }
 
     private <T> ResponseEntity<ApiResponse<T>> ok(T data) {

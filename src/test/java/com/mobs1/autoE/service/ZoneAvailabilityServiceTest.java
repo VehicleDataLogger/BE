@@ -4,6 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
+import com.mobs1.autoE.domain.park.ParkingSlot;
+import com.mobs1.autoE.domain.park.SlotOccupancy;
+import com.mobs1.autoE.domain.park.repository.SlotOccupancyRepository;
+import com.mobs1.autoE.domain.zone.dto.CurrentParkingLocationResponse;
 import com.mobs1.autoE.domain.zone.dto.TypeAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.service.ZoneAvailabilityService;
 import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
@@ -24,6 +28,7 @@ import org.mockito.Mockito;
 class ZoneAvailabilityServiceTest {
 
     private ZoneAvailabilityRepository repository;
+    private SlotOccupancyRepository slotOccupancyRepository;
     private ZoneAvailabilityService service;
 
     private ZoneAvailability availability;
@@ -31,7 +36,8 @@ class ZoneAvailabilityServiceTest {
     @BeforeEach
     void setUp() {
         repository = Mockito.mock(ZoneAvailabilityRepository.class);
-        service = new ZoneAvailabilityService(repository);
+        slotOccupancyRepository = Mockito.mock(SlotOccupancyRepository.class);
+        service = new ZoneAvailabilityService(repository, slotOccupancyRepository);
 
         Zone zone = new Zone("A");
         LocalDateTime now = LocalDateTime.now();
@@ -89,5 +95,35 @@ class ZoneAvailabilityServiceTest {
         assertThat(general.available()).isEqualTo(12);
         assertThat(ev.available()).isEqualTo(3);
         assertThat(disabled.available()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("차량 번호로 현재 주차 위치를 조회")
+    void getCurrentParkingLocation() {
+        SlotOccupancy occupancy = Mockito.mock(SlotOccupancy.class);
+        ParkingSlot slot = Mockito.mock(ParkingSlot.class);
+        Zone zone = Mockito.mock(Zone.class);
+
+        when(zone.getId()).thenReturn(1);
+        when(slot.getZone()).thenReturn(zone);
+        when(slot.getSlotCode()).thenReturn("A-12");
+        when(occupancy.getSlot()).thenReturn(slot);
+        when(slotOccupancyRepository.findFirstByVehicleVehicleNumAndOccupiedTrueOrderByOccupiedSinceDesc("12가3456"))
+                .thenReturn(Optional.of(occupancy));
+
+        CurrentParkingLocationResponse response = service.getCurrentParkingLocation("12가3456");
+
+        assertThat(response.zoneId()).isEqualTo("1");
+        assertThat(response.slotName()).isEqualTo("A-12");
+    }
+
+    @Test
+    @DisplayName("차량 번호로 현재 주차 위치를 찾을 수 없으면 예외")
+    void getCurrentParkingLocationNotFound() {
+        when(slotOccupancyRepository.findFirstByVehicleVehicleNumAndOccupiedTrueOrderByOccupiedSinceDesc("99다9999"))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.getCurrentParkingLocation("99다9999"))
+                .isInstanceOf(BusinessException.class);
     }
 }

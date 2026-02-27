@@ -1,5 +1,8 @@
 package com.mobs1.autoE.domain.zone.service;
 
+import com.mobs1.autoE.domain.park.SlotOccupancy;
+import com.mobs1.autoE.domain.park.repository.SlotOccupancyRepository;
+import com.mobs1.autoE.domain.zone.dto.CurrentParkingLocationResponse;
 import com.mobs1.autoE.domain.zone.dto.TypeAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.entity.ZoneAvailability;
@@ -17,9 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class ZoneAvailabilityService {
 
     private final ZoneAvailabilityRepository availabilityRepository;
+    private final SlotOccupancyRepository slotOccupancyRepository;
 
-    public ZoneAvailabilityService(ZoneAvailabilityRepository availabilityRepository) {
+    public ZoneAvailabilityService(ZoneAvailabilityRepository availabilityRepository,
+                                   SlotOccupancyRepository slotOccupancyRepository) {
         this.availabilityRepository = availabilityRepository;
+        this.slotOccupancyRepository = slotOccupancyRepository;
     }
 
     // 전체 여석 조회 메서드
@@ -32,21 +38,18 @@ public class ZoneAvailabilityService {
 
 
     public ZoneAvailabilityResponse getZoneAvailability(Integer zoneId) {
-        ZoneAvailability availability = availabilityRepository.findByZoneId(zoneId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
-        return ZoneAvailabilityResponse.from(availability);
+        return ZoneAvailabilityResponse.from(findAvailabilityOrThrow(zoneId));
     }
 
     public TypeAvailabilityResponse getZoneTypeAvailability(Integer zoneId, SlotCategory category) {
-        ZoneAvailability availability = availabilityRepository.findByZoneId(zoneId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
+        ZoneAvailability availability = findAvailabilityOrThrow(zoneId);
         return toTypeAvailabilityResponse(availability, category);
     }
 
     // A 존의 전체 여석 수 반환
     public int getZoneAvailableCount(Integer zoneId) {
         return availabilityRepository.findAvailableSlotsByZoneId(zoneId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
+                .orElseThrow(this::zoneNotFound);
     }
 
     // A 존의 타입 별 여석 수 반환
@@ -56,7 +59,7 @@ public class ZoneAvailabilityService {
             case EV -> availabilityRepository.findEvAvailableByZoneId(zoneId);
             case DISABLED -> availabilityRepository.findDisabledAvailableByZoneId(zoneId);
             default -> throw new BusinessException(ErrorCode.SLOT_CATEGORY_NOT_SUPPORTED);
-        }).orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
+        }).orElseThrow(this::zoneNotFound);
     }
 
     // 타입 별 정보조회 메서드
@@ -87,11 +90,46 @@ public class ZoneAvailabilityService {
         };
     }
 
+    private ZoneAvailability findAvailabilityOrThrow(Integer zoneId) {
+        return availabilityRepository.findByZoneId(zoneId)
+                .orElseThrow(this::zoneNotFound);
+    }
+
+    private BusinessException zoneNotFound() {
+        return businessError(ErrorCode.ZONE_NOT_FOUND);
+    }
+
     public Long getTotalAvailableByType(SlotCategory category) {
         return switch (category) {
             case GENERAL -> availabilityRepository.sumGeneralAvailable();
             case EV -> availabilityRepository.sumEvAvailable();
             case DISABLED -> availabilityRepository.sumDisabledAvailable();
         };
+    }
+
+    public CurrentParkingLocationResponse getCurrentParkingLocation(String vehicleNum) {
+        SlotOccupancy occupancy = findCurrentOccupancy(vehicleNum);
+        return toCurrentParkingLocationResponse(occupancy);
+    }
+
+    private SlotOccupancy findCurrentOccupancy(String vehicleNum) {
+        return slotOccupancyRepository
+                .findFirstByVehicleVehicleNumAndOccupiedTrueOrderByOccupiedSinceDesc(vehicleNum)
+                .orElseThrow(this::currentParkingNotFound);
+    }
+
+    private CurrentParkingLocationResponse toCurrentParkingLocationResponse(SlotOccupancy occupancy) {
+        var slot = occupancy.getSlot();
+        return new CurrentParkingLocationResponse(
+                String.valueOf(slot.getZone().getId()),
+                slot.getSlotCode());
+    }
+
+    private BusinessException currentParkingNotFound() {
+        return businessError(ErrorCode.CURRENT_PARKING_NOT_FOUND);
+    }
+
+    private BusinessException businessError(ErrorCode errorCode) {
+        return new BusinessException(errorCode);
     }
 }

@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.mobs1.autoE.domain.zone.controller.ZoneAvailabilityController;
+import com.mobs1.autoE.domain.zone.dto.CurrentParkingLocationResponse;
 import com.mobs1.autoE.domain.zone.dto.TypeAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.dto.ZoneAvailabilityResponse;
 import com.mobs1.autoE.domain.zone.service.ZoneAvailabilityService;
@@ -138,5 +139,68 @@ class ZoneAvailabilityControllerT {
         mockMvc.perform(get("/zones/1/availability/general"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("E101"));
+    }
+
+    @Test
+    @DisplayName("차량 번호로 현재 주차 위치(zone_id, slot_name)를 조회한다")
+    void getCurrentParkingLocationByVehicleNumber() throws Exception {
+        when(service.getCurrentParkingLocation("12가3456"))
+                .thenReturn(new CurrentParkingLocationResponse("1", "A-12"));
+
+        mockMvc.perform(get("/zones/vehicles/12가3456/current-parking"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.zone_id").value("1"))
+                .andExpect(jsonPath("$.data.slot_name").value("A-12"));
+    }
+
+    @Test
+    @DisplayName("현재 주차 정보가 없으면 404(E102)를 반환한다")
+    void currentParkingNotFound() throws Exception {
+        when(service.getCurrentParkingLocation("99다9999"))
+                .thenThrow(new BusinessException(ErrorCode.CURRENT_PARKING_NOT_FOUND));
+
+        mockMvc.perform(get("/zones/vehicles/99다9999/current-parking"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("E102"));
+    }
+
+    @Test
+    @DisplayName("차량 번호 형식이 잘못되면 400(E000)을 반환한다")
+    void invalidVehicleNumber() throws Exception {
+        mockMvc.perform(get("/zones/vehicles/ABC123/current-parking"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("E000"));
+    }
+
+    @Test
+    @DisplayName("구분 문자 제거 후에도 차량 번호가 유효하지 않으면 400(E000)을 반환한다")
+    void invalidVehicleNumberAfterNormalization() throws Exception {
+        mockMvc.perform(get("/zones/vehicles/12가-34/current-parking"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("E000"));
+    }
+
+    @Test
+    @DisplayName("공백이 포함된 차량 번호는 정규화 후 현재 주차 위치를 반환한다")
+    void getCurrentParkingLocationByVehicleNumberWithWhitespace() throws Exception {
+        when(service.getCurrentParkingLocation("12가3456"))
+                .thenReturn(new CurrentParkingLocationResponse("1", "A-12"));
+
+        mockMvc.perform(get("/zones/vehicles/12가 3456/current-parking"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.zone_id").value("1"))
+                .andExpect(jsonPath("$.data.slot_name").value("A-12"));
+    }
+
+    @Test
+    @DisplayName("하이픈이 포함된 차량 번호는 정규화 후 현재 주차 위치를 반환한다")
+    void getCurrentParkingLocationByVehicleNumberWithHyphen() throws Exception {
+        when(service.getCurrentParkingLocation("12가3456"))
+                .thenReturn(new CurrentParkingLocationResponse("1", "A-12"));
+
+        mockMvc.perform(get("/zones/vehicles/12가-3456/current-parking"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.zone_id").value("1"))
+                .andExpect(jsonPath("$.data.slot_name").value("A-12"));
     }
 }
