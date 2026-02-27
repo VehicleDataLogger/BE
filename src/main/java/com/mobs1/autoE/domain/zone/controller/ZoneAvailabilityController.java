@@ -94,7 +94,7 @@ public class ZoneAvailabilityController {
 
     // 차량 번호 기준으로 주차한 지역 반환
     @GetMapping("/vehicles/{vehicleNum}/current-parking")
-    @Operation(summary = "차량번호로 주차장 위치 반환", description = "입력한 차량 번호를 기준으로, 주차한 차량의 Zone_name과 slot_name을 반환합니다.")
+    @Operation(summary = "차량번호로 주차장 위치 반환", description = "입력한 차량 번호를 기준으로, 주차한 차량의 Zone_id와 slot_name을 반환합니다.")
     public ResponseEntity<ApiResponse<CurrentParkingLocationResponse>> getCurrentParkingByVehicleNum(@PathVariable String vehicleNum) {
         String normalizedVehicleNum = VehicleNumberValidator.normalizeAndValidate(vehicleNum);
         return ok(zoneAvailabilityService.getCurrentParkingLocation(normalizedVehicleNum));
