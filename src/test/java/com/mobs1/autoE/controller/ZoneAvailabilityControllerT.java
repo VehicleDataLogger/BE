@@ -171,4 +171,24 @@ class ZoneAvailabilityControllerT {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("E000"));
     }
+
+    @Test
+    @DisplayName("구분 문자 제거 후에도 차량 번호가 유효하지 않으면 400(E000)을 반환한다")
+    void invalidVehicleNumberAfterNormalization() throws Exception {
+        mockMvc.perform(get("/zones/vehicles/12가-34/current-parking"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("E000"));
+    }
+
+    @Test
+    @DisplayName("공백이 포함된 차량 번호는 정규화 후 현재 주차 위치를 반환한다")
+    void getCurrentParkingLocationByVehicleNumberWithWhitespace() throws Exception {
+        when(service.getCurrentParkingLocation("12가3456"))
+                .thenReturn(new CurrentParkingLocationResponse("1", "A-12"));
+
+        mockMvc.perform(get("/zones/vehicles/12가 3456/current-parking"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.zone_id").value("1"))
+                .andExpect(jsonPath("$.data.slot_name").value("A-12"));
+    }
 }
