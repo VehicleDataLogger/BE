@@ -38,21 +38,18 @@ public class ZoneAvailabilityService {
 
 
     public ZoneAvailabilityResponse getZoneAvailability(Integer zoneId) {
-        ZoneAvailability availability = availabilityRepository.findByZoneId(zoneId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
-        return ZoneAvailabilityResponse.from(availability);
+        return ZoneAvailabilityResponse.from(findAvailabilityOrThrow(zoneId));
     }
 
     public TypeAvailabilityResponse getZoneTypeAvailability(Integer zoneId, SlotCategory category) {
-        ZoneAvailability availability = availabilityRepository.findByZoneId(zoneId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
+        ZoneAvailability availability = findAvailabilityOrThrow(zoneId);
         return toTypeAvailabilityResponse(availability, category);
     }
 
     // A 존의 전체 여석 수 반환
     public int getZoneAvailableCount(Integer zoneId) {
         return availabilityRepository.findAvailableSlotsByZoneId(zoneId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
+                .orElseThrow(this::zoneNotFound);
     }
 
     // A 존의 타입 별 여석 수 반환
@@ -62,7 +59,7 @@ public class ZoneAvailabilityService {
             case EV -> availabilityRepository.findEvAvailableByZoneId(zoneId);
             case DISABLED -> availabilityRepository.findDisabledAvailableByZoneId(zoneId);
             default -> throw new BusinessException(ErrorCode.SLOT_CATEGORY_NOT_SUPPORTED);
-        }).orElseThrow(() -> new BusinessException(ErrorCode.ZONE_NOT_FOUND));
+        }).orElseThrow(this::zoneNotFound);
     }
 
     // 타입 별 정보조회 메서드
@@ -93,6 +90,15 @@ public class ZoneAvailabilityService {
         };
     }
 
+    private ZoneAvailability findAvailabilityOrThrow(Integer zoneId) {
+        return availabilityRepository.findByZoneId(zoneId)
+                .orElseThrow(this::zoneNotFound);
+    }
+
+    private BusinessException zoneNotFound() {
+        return businessError(ErrorCode.ZONE_NOT_FOUND);
+    }
+
     public Long getTotalAvailableByType(SlotCategory category) {
         return switch (category) {
             case GENERAL -> availabilityRepository.sumGeneralAvailable();
@@ -109,7 +115,7 @@ public class ZoneAvailabilityService {
     private SlotOccupancy findCurrentOccupancy(String vehicleNum) {
         return slotOccupancyRepository
                 .findFirstByVehicleVehicleNumAndOccupiedTrueOrderByOccupiedSinceDesc(vehicleNum)
-                .orElseThrow(() -> new BusinessException(ErrorCode.CURRENT_PARKING_NOT_FOUND));
+                .orElseThrow(this::currentParkingNotFound);
     }
 
     private CurrentParkingLocationResponse toCurrentParkingLocationResponse(SlotOccupancy occupancy) {
@@ -117,5 +123,13 @@ public class ZoneAvailabilityService {
         return new CurrentParkingLocationResponse(
                 String.valueOf(slot.getZone().getId()),
                 slot.getSlotCode());
+    }
+
+    private BusinessException currentParkingNotFound() {
+        return businessError(ErrorCode.CURRENT_PARKING_NOT_FOUND);
+    }
+
+    private BusinessException businessError(ErrorCode errorCode) {
+        return new BusinessException(errorCode);
     }
 }
