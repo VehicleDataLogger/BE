@@ -163,4 +163,12 @@ class ZoneAvailabilityControllerT {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("E102"));
     }
+
+    @Test
+    @DisplayName("차량 번호 형식이 잘못되면 400(E000)을 반환한다")
+    void invalidVehicleNumber() throws Exception {
+        mockMvc.perform(get("/zones/vehicles/ABC123/current-parking"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("E000"));
+    }
 }
