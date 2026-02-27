@@ -191,4 +191,16 @@ class ZoneAvailabilityControllerT {
                 .andExpect(jsonPath("$.data.zone_id").value("1"))
                 .andExpect(jsonPath("$.data.slot_name").value("A-12"));
     }
+
+    @Test
+    @DisplayName("하이픈이 포함된 차량 번호는 정규화 후 현재 주차 위치를 반환한다")
+    void getCurrentParkingLocationByVehicleNumberWithHyphen() throws Exception {
+        when(service.getCurrentParkingLocation("12가3456"))
+                .thenReturn(new CurrentParkingLocationResponse("1", "A-12"));
+
+        mockMvc.perform(get("/zones/vehicles/12가-3456/current-parking"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.zone_id").value("1"))
+                .andExpect(jsonPath("$.data.slot_name").value("A-12"));
+    }
 }
