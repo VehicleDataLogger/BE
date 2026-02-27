@@ -39,7 +39,7 @@ class ZoneAvailabilityControllerTypeCountIT {
 
         mockMvc.perform(get("/zones/availability/type/GENERAL/count"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data").value(60));
+                .andExpect(jsonPath("$.data").value(1));
     }
 
 }

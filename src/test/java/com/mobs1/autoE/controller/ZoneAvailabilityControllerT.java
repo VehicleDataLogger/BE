@@ -139,4 +139,13 @@ class ZoneAvailabilityControllerT {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("E101"));
     }
+
+    @Test
+    @DisplayName("차량 번호로 현재 주차 위치(zone_id, slot_name)를 조회한다")
+    void getCurrentParkingLocationByVehicleNumber() throws Exception {
+        mockMvc.perform(get("/zones/vehicles/12가3456/current-parking"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.zone_id").value("Z-01"))
+                .andExpect(jsonPath("$.data.slot_name").value("A-12"));
+    }
 }
