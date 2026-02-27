@@ -13,6 +13,7 @@ description: |
    - structural (refactor only)
    - behavioral (feat/fix only)
 4. Structural and behavioral changes are not mixed.
+5. Commit message should be always Eng (not Kor)
 
 # Steps
 1. Run local gate:
