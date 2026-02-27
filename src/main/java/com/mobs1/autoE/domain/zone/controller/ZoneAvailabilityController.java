@@ -96,11 +96,16 @@ public class ZoneAvailabilityController {
     @GetMapping("/vehicles/{vehicleNum}/current-parking")
     @Operation(summary = "차량번호로 주차장 위치 반환", description = "입력한 차량 번호를 기준으로, 주차한 차량의 Zone_name과 slot_name을 반환합니다.")
     public ResponseEntity<ApiResponse<CurrentParkingLocationResponse>> getCurrentParkingByVehicleNum(@PathVariable String vehicleNum) {
-        VehicleNumberValidator.validate(vehicleNum);
-        return ok(zoneAvailabilityService.getCurrentParkingLocation(vehicleNum));
+        String normalizedVehicleNum = normalizeVehicleNum(vehicleNum);
+        VehicleNumberValidator.validate(normalizedVehicleNum);
+        return ok(zoneAvailabilityService.getCurrentParkingLocation(normalizedVehicleNum));
     }
 
     private <T> ResponseEntity<ApiResponse<T>> ok(T data) {
         return ResponseEntity.ok(ApiResponse.success(SuccessCode.SUCCESS_READ, data));
+    }
+
+    private String normalizeVehicleNum(String vehicleNum) {
+        return vehicleNum.replaceAll("\\s+", "");
     }
 }
