@@ -107,7 +107,6 @@ public class ZoneAvailabilityService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.CURRENT_PARKING_NOT_FOUND));
 
         return new CurrentParkingLocationResponse(
-                String.valueOf(occupancy.getSlot().getZone().getId()),
-                occupancy.getSlot().getSlotCode());
+                String.valueOf(occupancy.getSlot().getZone().getId()), occupancy.getSlot().getSlotCode());
     }
 }
