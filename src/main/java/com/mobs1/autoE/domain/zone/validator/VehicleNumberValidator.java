@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 public final class VehicleNumberValidator {
 
     private static final Pattern VEHICLE_NUM_PATTERN = Pattern.compile("^[0-9]{2,3}[가-힣][0-9]{4}$");
+    private static final Pattern WHITESPACE_PATTERN = Pattern.compile("\\s+");
 
     private VehicleNumberValidator() {
     }
@@ -15,5 +16,15 @@ public final class VehicleNumberValidator {
         if (!VEHICLE_NUM_PATTERN.matcher(vehicleNum).matches()) {
             throw new BusinessException(ErrorCode.INVALID_INPUT);
         }
+    }
+
+    private static String normalize(String vehicleNum) {
+        return WHITESPACE_PATTERN.matcher(vehicleNum).replaceAll("");
+    }
+
+    public static String normalizeAndValidate(String vehicleNum) {
+        String normalizedVehicleNum = normalize(vehicleNum);
+        validate(normalizedVehicleNum);
+        return normalizedVehicleNum;
     }
 }
